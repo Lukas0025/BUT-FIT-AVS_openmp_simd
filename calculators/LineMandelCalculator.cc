@@ -1,8 +1,8 @@
 /**
  * @file LineMandelCalculator.cc
- * @author FULL NAME <xlogin00@stud.fit.vutbr.cz>
+ * @author Lukáš Plevač <xpleva07@stud.fit.vutbr.cz>
  * @brief Implementation of Mandelbrot calculator that uses SIMD paralelization over lines
- * @date DATE
+ * @date 1.11.2022
  */
 #include <iostream>
 #include <string>
@@ -26,40 +26,49 @@ LineMandelCalculator::~LineMandelCalculator() {
 	data = NULL;
 }
 
-template <typename T>
-static inline int mandelbrot(T real, T imag, int limit)
-{
-	T zReal = real;
-	T zImag = imag;
-
-	for (int i = 0; i < limit; ++i)
-	{
-		T r2 = zReal * zReal;
-		T i2 = zImag * zImag;
-
-		if (r2 + i2 > 4.0f)
-			return i;
-
-		zImag = 2.0f * zReal * zImag + imag;
-		zReal = r2 - i2 + real;
-	}
-	return limit;
-}
-
-
 int * LineMandelCalculator::calculateMandelbrot () {
 	int *pdata = data;
-	for (int i = 0; i < height; i++)
-	{
-		for (int j = 0; j < width; j++)
-		{
-			float x = x_start + j * dx; // current real value
-			float y = y_start + i * dy; // current imaginary value
 
-			int value = mandelbrot(x, y, limit);
+	float zReal[width];
+	float zImag[width];
 
-			*(pdata++) = value;
+	for (int i = 0; i < height; i++) {
+		
+		int rowIndex = i * width;
+		float imag = y_start + i * dy;
+
+		//init values
+		#pragma omp simd
+		for (int j = 0; j < width; j++) {
+			zReal[j] = x_start + j * dx; // current real value
+			zImag[j] = imag;             // current imaginary value
 		}
+
+		//fill empty
+		#pragma omp simd
+		for (int j = 0; j < width; j++) {
+			pdata[rowIndex + j] = -1;
+		}
+
+		for (int iteration = 0; iteration < limit; ++iteration) {
+
+			#pragma omp simd
+			for (int j = 0; j < width; j++) {
+				if (pdata[rowIndex + j] == -1) {
+					float r2 = zReal[j] * zReal[j];
+					float i2 = zImag[j] * zImag[j];
+
+					if (r2 + i2 > 4.0f) {
+						pdata[rowIndex + j] = iteration;
+					} else {
+						zImag[j] = 2.0f * zReal[j] * zImag[j] + imag;
+						zReal[j] = r2 - i2 + (x_start + j * dx);
+					}
+				}
+			}
+		}
+		
 	}
+
 	return data;
 }
