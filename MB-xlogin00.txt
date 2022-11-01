@@ -1,0 +1,25 @@
+#### Stručně odpovězte na následující otázky: ######
+
+1. Proč je nutné určovat, zda má výpočet pokračovat?
+==============================================================================
+
+
+2. Byla "Line" vektorizace efektivní? Proč?
+==============================================================================
+
+
+3. Jaká byla dosažena výkonnost v Intel Advisoru pro jednotlivé implementace 
+(v GFLOPS)?
+==============================================================================
+
+
+4. Jaká část kódu byla vektorizována v "Line" implementaci? Vyčteme tuto 
+informaci i u batch kalkulátoru?
+==============================================================================
+
+
+5. Co vyčteme z Roofline modelu pro obě vektorizované implementace?
+==============================================================================
+
+
+
