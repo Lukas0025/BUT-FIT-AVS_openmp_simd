@@ -7,6 +7,8 @@
 #ifndef BATCHMANDELCALCULATOR_H
 #define BATCHMANDELCALCULATOR_H
 
+#define blockSize 32
+
 #include <BaseMandelCalculator.h>
 
 class BatchMandelCalculator : public BaseMandelCalculator
@@ -17,7 +19,9 @@ public:
     int * calculateMandelbrot();
 
 private:
-    // @TODO add all internal parameters
+    int *data;
+    float *zReal;
+    float *zImag;
 };
 
 #endif

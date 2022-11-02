@@ -15,5 +15,7 @@ public:
     int *calculateMandelbrot();
 
 private:
-    int *data;
+    int *data;    /* 64 aligned */
+    float *zReal; /* 64 aligned */
+    float *zImag; /* 64 aligned */
 };
