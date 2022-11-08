@@ -51,7 +51,7 @@ int * BatchMandelCalculator::calculateMandelbrot () {
 		//fill empty
 		#pragma omp simd
 		for (int j = 0; j < width; j++) {
-			data[rowIndex + j] = -1;
+			data[rowIndex + j] = limit;
 		}
 
 		for (int block = 0; block < width / blockSize; block++) {
@@ -65,7 +65,7 @@ int * BatchMandelCalculator::calculateMandelbrot () {
 				#pragma omp simd
 				for (int j = blockStart; j < blockEnd; j++) {
 
-					if (data[rowIndex + j] == -1) {
+					if (data[rowIndex + j] == limit) {
 						float r2 = zReal[j] * zReal[j];
 						float i2 = zImag[j] * zImag[j];
 

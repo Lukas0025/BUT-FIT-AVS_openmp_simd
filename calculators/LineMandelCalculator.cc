@@ -48,7 +48,7 @@ int * LineMandelCalculator::calculateMandelbrot () {
 		//fill empty
 		#pragma omp for simd
 		for (int j = 0; j < width; j++) {
-			data[rowIndex + j] = -1;
+			data[rowIndex + j] = limit;
 		}
 
 		unsigned sum = 0;
@@ -57,7 +57,7 @@ int * LineMandelCalculator::calculateMandelbrot () {
 
 			#pragma omp for simd
 			for (int j = 0; j < width; j++) {
-				if (data[rowIndex + j] == -1) {
+				if (data[rowIndex + j] == limit) {
 					float r2 = zReal[j] * zReal[j];
 					float i2 = zImag[j] * zImag[j];
 
