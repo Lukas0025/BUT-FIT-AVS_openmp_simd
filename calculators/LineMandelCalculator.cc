@@ -37,6 +37,7 @@ int * LineMandelCalculator::calculateMandelbrot () {
 		
 		int rowIndex = i * width;
 		float imag = y_start + i * dy;
+		int cpRowIndex = (height - i - 1) * width;
 
 		//init values
 		#pragma omp for simd
@@ -73,24 +74,13 @@ int * LineMandelCalculator::calculateMandelbrot () {
 
 			if (sum == width) break;
 		}
-		
-	}
 
-	//correct offset
-	if (height % 2 == 0) {
-		height -= 1;
-	}
-
-	//copy half
-	for (int i = h2; i < height; i++) {
-
-		int cpRowIndex = (height - i) * width;
-		int rowIndex   = i * width;
-		
-		#pragma omp for simd
+		//copy
+		#pragma omp simd
 		for (int j = 0; j < width; j++) {
-			data[rowIndex + j] = data[cpRowIndex + j];
+			data[cpRowIndex + j] = data[rowIndex + j];
 		}
+		
 	}
 
 	return data;

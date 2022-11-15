@@ -12,6 +12,8 @@
 
 #include <stdlib.h>
 #include <stdexcept>
+#include <omp.h>
+#include <cmath>
 
 #include "BatchMandelCalculator.h"
 
@@ -35,11 +37,13 @@ int * BatchMandelCalculator::calculateMandelbrot () {
 
 	int h2 = height / 2;
 
-	#pragma omp parallel for
+	//#pragma omp parallel for
 	for (int i = 0; i <= h2; i++) {
 		
 		int rowIndex = i * width;
 		float imag = y_start + i * dy;
+
+		int cpRowIndex = (height - i - 1) * width;
 
 		//init values
 		#pragma omp simd
@@ -54,11 +58,16 @@ int * BatchMandelCalculator::calculateMandelbrot () {
 			data[rowIndex + j] = limit;
 		}
 
-		for (int block = 0; block < width / blockSize; block++) {
+		for (int block = 0; block < std::ceil(((float) width) / blockSize); block++) {
 			
 			int blockStart = blockSize * block;
 			int blockEnd   = blockSize * block + blockSize;
 			int sum        = 0;
+
+			//last iteratin
+			if (blockEnd > width) {
+				blockEnd = width;
+			}
 			
 			for (int iteration = 0; iteration < limit; ++iteration) {
 
@@ -82,22 +91,11 @@ int * BatchMandelCalculator::calculateMandelbrot () {
 				if (sum == blockSize) break;
 			}
 		}
-	}
 
-	//correct offset
-	if (height % 2 == 0) {
-		height -= 1;
-	}
-
-	//copy half
-	for (int i = h2; i < height; i++) {
-
-		int cpRowIndex = (height - i) * width;
-		int rowIndex   = i * width;
-		
+		//copy
 		#pragma omp simd
 		for (int j = 0; j < width; j++) {
-			data[rowIndex + j] = data[cpRowIndex + j];
+			data[cpRowIndex + j] = data[rowIndex + j];
 		}
 	}
 

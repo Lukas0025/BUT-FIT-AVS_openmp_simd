@@ -7,7 +7,7 @@
 #ifndef BATCHMANDELCALCULATOR_H
 #define BATCHMANDELCALCULATOR_H
 
-#define blockSize 32
+#define blockSize 64
 
 #include <BaseMandelCalculator.h>
 
