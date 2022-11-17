@@ -2,10 +2,9 @@
 
 SCRIPT_ROOT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 CALCULATORS=("ref" "line" "batch")
-SIZES=("32" "64" "128" "92" "93" "1039" "256" "1024" "4096")
 VALID=1
 
-for size in "${SIZES[@]}"; do
+for size in {1..4096}; do
     for calc in "${CALCULATORS[@]}"; do
         ./mandelbrot -s $size -i 100 -c $calc --batch cmp_$calc.npz
     done
@@ -19,6 +18,11 @@ for size in "${SIZES[@]}"; do
 
     echo "Batch vs line $size"
     python3 ${SCRIPT_ROOT_PATH}/compare.py cmp_line.npz cmp_batch.npz || VALID=0
+
+    if [ "$VALID" -eq 0 ]; then
+        echo "Test fail $size";
+        exit 1
+    fi
 done
 
 if [ "$VALID" -eq 1 ]; then

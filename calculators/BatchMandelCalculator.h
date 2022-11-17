@@ -7,7 +7,13 @@
 #ifndef BATCHMANDELCALCULATOR_H
 #define BATCHMANDELCALCULATOR_H
 
-#define blockSize 64
+#define blockSize 256
+
+// Points of main cluter in mandel
+#define mainCluterIStart 0.33
+#define mainCluterIEnd   0.67
+#define mainCluterRStart 0.50
+#define mainCluterREnd   0.73
 
 #include <BaseMandelCalculator.h>
 
