@@ -2,24 +2,31 @@
 
 1. Proč je nutné určovat, zda má výpočet pokračovat?
 ==============================================================================
+Je nutné mít definovaný limit, protože jinak by došlo k zacyklení u bodů které se v množině nacházejí. Dále je nutné také zjistit v jaké iteraci jsem zjistily že není bod v množine abychom zapsaly korektní výsledky do výstupní array.
 
+U vektorizovaných verzí má také především smysl kontrolovat kolik výpočtů je již dokončených abychom mohly výpočet nad řádekem/blokem dříve ukončit, pokud všechny buňky již dokončily výpočet.
 
 2. Byla "Line" vektorizace efektivní? Proč?
 ==============================================================================
+Byla efektivnější než referenční, ale mnohem méně výkonější než batch varianta (ale pouze na dostatečně malích maticích) - protože došlo k paralelnímu výpočtu a aplikaci symetrie. Důvodem menší efektivity bylo že celí řádak se počítal tolikrát dokud všechny buňky na řádku nedokončily svůj výpočet a tudíš na řádcích, kde byly body v množině došlo k opakování limitkrát. Navíc docházelo často k výpadkům v paměti chace, protože jsme chodily přes celý řádek opakovaně pro každou iteraci (pro dastatečně velkou matici). 
 
 
 3. Jaká byla dosažena výkonnost v Intel Advisoru pro jednotlivé implementace 
 (v GFLOPS)?
 ==============================================================================
+GFLOPS ref:   2.6  (Hlavní výpočetní smyčka 0.69)
+GFLOPS line:  13   (Hlavní výpočetní smyčka 19)
+GFLOPS batch: 12.6 (Hlavní výpočetní smyčka 23)
 
 
 4. Jaká část kódu byla vektorizována v "Line" implementaci? Vyčteme tuto 
 informaci i u batch kalkulátoru?
 ==============================================================================
-
+Nejhlubší smyčka s pragmou omp simd, která počítá jednu iteraci přes šířku (celou nebo blocku - line/batch)
++ pomocné smyčky pro plnění array a symetrii
 
 5. Co vyčteme z Roofline modelu pro obě vektorizované implementace?
 ==============================================================================
-
+Vektorizace a přehození smyček nás v grafu posunulo více nahoru a doprava. Došlo k zvíšení výkonu (GFLOPS) i počtu operací na Byte.
 
 
